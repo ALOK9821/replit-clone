@@ -15,7 +15,6 @@ const coreV1Api = kubeconfig.makeApiClient(CoreV1Api);
 const appsV1Api = kubeconfig.makeApiClient(AppsV1Api);
 const networkingV1Api = kubeconfig.makeApiClient(NetworkingV1Api);
 
-// Updated utility function to handle multi-document YAML files
 const readAndParseKubeYaml = (filePath: string, replId: string): Array<any> => {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const docs = yaml.parseAllDocuments(fileContent).map((doc) => {
@@ -29,8 +28,8 @@ const readAndParseKubeYaml = (filePath: string, replId: string): Array<any> => {
 };
 
 app.post("/start", async (req, res) => {
-    const { userId, replId } = req.body; // Assume a unique identifier for each user
-    const namespace = "default"; // Assuming a default namespace, adjust as needed
+    const { userId, replId } = req.body; 
+    const namespace = "default"; 
 
     try {
         const kubeManifests = readAndParseKubeYaml(path.join(__dirname, "../service.yaml"), replId);

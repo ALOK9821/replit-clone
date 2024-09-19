@@ -36,7 +36,6 @@ export const fetchS3Folder = async (key: string, localPath: string): Promise<voi
 
 export async function copyS3Folder(sourcePrefix: string, destinationPrefix: string, continuationToken?: string): Promise<void> {
     try {
-        // List all objects in the source folder
         const listParams = {
             Bucket: process.env.S3_BUCKET ?? "",
             Prefix: sourcePrefix,
@@ -47,7 +46,6 @@ export async function copyS3Folder(sourcePrefix: string, destinationPrefix: stri
 
         if (!listedObjects.Contents || listedObjects.Contents.length === 0) return;
         
-        // Copy each object to the new location
         for (const object of listedObjects.Contents) {
             if (!object.Key) continue;
             let destinationKey = object.Key.replace(sourcePrefix, destinationPrefix);
@@ -61,8 +59,6 @@ export async function copyS3Folder(sourcePrefix: string, destinationPrefix: stri
             await s3.copyObject(copyParams).promise();
             console.log(`Copied ${object.Key} to ${destinationKey}`);
         }
-
-        // Check if the list was truncated and continue copying if necessary
         if (listedObjects.IsTruncated) {
             listParams.ContinuationToken = listedObjects.NextContinuationToken;
             await copyS3Folder(sourcePrefix, destinationPrefix, continuationToken);
